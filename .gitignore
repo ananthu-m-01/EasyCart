@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#Environment variables
+.env
+.env.*
+
+# Ignore Spring Boot config files
+/src/main/resources/application.properties
