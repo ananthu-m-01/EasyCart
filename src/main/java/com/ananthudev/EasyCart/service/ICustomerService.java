@@ -7,6 +7,6 @@ import com.ananthudev.EasyCart.model.Customer;
 import java.util.List;
 
 public interface ICustomerService {
-    List<Customer> getAllCustomers();
+    List<CustomerResponseDTO> getAllCustomers();
     CustomerResponseDTO addCustomer(CreateCustomerDTO createCustomerDTO);
 }

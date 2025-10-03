@@ -20,8 +20,15 @@ public class CustomerService implements ICustomerService{
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerResponseDTO> getAllCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+
+        return customers.stream()
+                .map(c -> new CustomerResponseDTO(
+                        c.getName(),
+                        c.getEmail(),
+                        c.getPhoneNumber()
+                )).toList();
     }
 
     @Override
