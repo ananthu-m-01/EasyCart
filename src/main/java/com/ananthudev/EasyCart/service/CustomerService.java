@@ -2,6 +2,7 @@ package com.ananthudev.EasyCart.service;
 
 import com.ananthudev.EasyCart.dto.CreateCustomerDTO;
 import com.ananthudev.EasyCart.dto.CustomerResponseDTO;
+import com.ananthudev.EasyCart.exceptions.CustomerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.DuplicateCustomerException;
 import com.ananthudev.EasyCart.model.Customer;
 import com.ananthudev.EasyCart.repository.CustomerRepository;
@@ -55,5 +56,21 @@ public class CustomerService implements ICustomerService{
                 savedCustomer.getEmail(),
                 savedCustomer.getPhoneNumber()
         );
+    }
+
+    @Override
+    public CustomerResponseDTO getCustomerById(Long id){
+        boolean exists = customerRepository.findAll().stream().anyMatch(customer -> customer.getId().equals(id));
+        if(!exists){
+            throw new CustomerNotFoundException("customer not found");
+        }
+
+        Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
+        CustomerResponseDTO customerResponseDTO = new CustomerResponseDTO();
+        customerResponseDTO.setName(customer.getName());
+        customerResponseDTO.setEmail(customer.getEmail());
+        customerResponseDTO.setPhoneNumber(customer.getPhoneNumber());
+
+        return customerResponseDTO;
     }
 }

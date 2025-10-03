@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.ananthudev.EasyCart.exceptions.DuplicateCustomerException;
+
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -24,6 +24,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<Map<String,Object>> handleCustomerNotFoundException(CustomerNotFoundException customerNotFoundException){
+        Map<String,Object> errorBody = new HashMap<>();
+        errorBody.put("timestamp",LocalDateTime.now());
+        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
+        errorBody.put("error","customer not found");
+        errorBody.put("message",customerNotFoundException.getMessage());
+
+        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
+    }
     public ResponseEntity<Map<String,Object>> handleGenericException(Exception exception){
         Map<String,Object> errorBody = new HashMap<>();
         errorBody.put("timestamp", LocalDateTime.now());
