@@ -1,5 +1,7 @@
 package com.ananthudev.EasyCart.exceptions;
 
+import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
+import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

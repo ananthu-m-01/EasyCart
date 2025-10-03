@@ -1,4 +1,4 @@
-package com.ananthudev.EasyCart.exceptions;
+package com.ananthudev.EasyCart.exceptions.customer;
 
 public class CustomerNotFoundException extends RuntimeException {
     public CustomerNotFoundException(String message){

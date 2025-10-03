@@ -1,10 +1,10 @@
-package com.ananthudev.EasyCart.service;
+package com.ananthudev.EasyCart.service.customer;
 
-import com.ananthudev.EasyCart.dto.CreateCustomerDTO;
-import com.ananthudev.EasyCart.dto.CustomerResponseDTO;
-import com.ananthudev.EasyCart.dto.CustomerUpdateDTO;
-import com.ananthudev.EasyCart.exceptions.CustomerNotFoundException;
-import com.ananthudev.EasyCart.exceptions.DuplicateCustomerException;
+import com.ananthudev.EasyCart.dto.customer.CreateCustomerDTO;
+import com.ananthudev.EasyCart.dto.customer.CustomerResponseDTO;
+import com.ananthudev.EasyCart.dto.customer.CustomerUpdateDTO;
+import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
+import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import com.ananthudev.EasyCart.model.Customer;
 import com.ananthudev.EasyCart.repository.CustomerRepository;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class CustomerService implements ICustomerService{
+public class CustomerService implements ICustomerService {
 
     private final CustomerRepository customerRepository;
 

@@ -1,4 +1,4 @@
-package com.ananthudev.EasyCart.dto;
+package com.ananthudev.EasyCart.dto.customer;
 
 import lombok.Data;
 

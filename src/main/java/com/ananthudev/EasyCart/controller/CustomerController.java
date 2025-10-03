@@ -1,16 +1,13 @@
 package com.ananthudev.EasyCart.controller;
 
 
-import com.ananthudev.EasyCart.dto.CreateCustomerDTO;
-import com.ananthudev.EasyCart.dto.CustomerResponseDTO;
-import com.ananthudev.EasyCart.dto.CustomerUpdateDTO;
-import com.ananthudev.EasyCart.model.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ananthudev.EasyCart.dto.customer.CreateCustomerDTO;
+import com.ananthudev.EasyCart.dto.customer.CustomerResponseDTO;
+import com.ananthudev.EasyCart.dto.customer.CustomerUpdateDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.ananthudev.EasyCart.service.CustomerService;
+import com.ananthudev.EasyCart.service.customer.CustomerService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController

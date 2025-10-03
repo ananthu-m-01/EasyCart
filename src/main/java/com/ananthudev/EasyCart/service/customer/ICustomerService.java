@@ -1,9 +1,8 @@
-package com.ananthudev.EasyCart.service;
+package com.ananthudev.EasyCart.service.customer;
 
-import com.ananthudev.EasyCart.dto.CreateCustomerDTO;
-import com.ananthudev.EasyCart.dto.CustomerResponseDTO;
-import com.ananthudev.EasyCart.dto.CustomerUpdateDTO;
-import com.ananthudev.EasyCart.model.Customer;
+import com.ananthudev.EasyCart.dto.customer.CreateCustomerDTO;
+import com.ananthudev.EasyCart.dto.customer.CustomerResponseDTO;
+import com.ananthudev.EasyCart.dto.customer.CustomerUpdateDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
