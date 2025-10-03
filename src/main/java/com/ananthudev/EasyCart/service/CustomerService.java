@@ -2,10 +2,12 @@ package com.ananthudev.EasyCart.service;
 
 import com.ananthudev.EasyCart.dto.CreateCustomerDTO;
 import com.ananthudev.EasyCart.dto.CustomerResponseDTO;
+import com.ananthudev.EasyCart.dto.CustomerUpdateDTO;
 import com.ananthudev.EasyCart.exceptions.CustomerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.DuplicateCustomerException;
 import com.ananthudev.EasyCart.model.Customer;
 import com.ananthudev.EasyCart.repository.CustomerRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -72,5 +74,34 @@ public class CustomerService implements ICustomerService{
         customerResponseDTO.setPhoneNumber(customer.getPhoneNumber());
 
         return customerResponseDTO;
+    }
+
+    @Override
+    public CustomerResponseDTO updateCustomer(Long id, CustomerUpdateDTO customerUpdateDTO){
+
+        boolean exists = customerRepository.findAll().stream().anyMatch(customer -> customer.getId().equals(id));
+        if(!exists){
+            throw new CustomerNotFoundException("customer not found");
+        }
+
+        Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
+        customer.setName(customerUpdateDTO.getName());
+        customer.setPassword(customerUpdateDTO.getPassword());
+        customer.setPhoneNumber(customerUpdateDTO.getPhoneNumber());
+        customer.setUpdatedAt(LocalDateTime.now());
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return new CustomerResponseDTO(
+                savedCustomer.getName(),
+                savedCustomer.getEmail(),
+                savedCustomer.getPhoneNumber()
+        );
+    }
+
+    @Override
+    public ResponseEntity<String> deleteCustomer(Long id){
+        Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
+        customerRepository.delete(customer);
+        return ResponseEntity.ok("customer deleted successfully");
     }
 }

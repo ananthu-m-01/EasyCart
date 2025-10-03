@@ -1,13 +1,10 @@
 package com.ananthudev.EasyCart.dto;
 
-import lombok.*;
+import lombok.Data;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-public class CreateCustomerDTO {
+public class CustomerUpdateDTO {
     private String name;
-    private String email;
     private String password;
     private String phoneNumber;
 }
