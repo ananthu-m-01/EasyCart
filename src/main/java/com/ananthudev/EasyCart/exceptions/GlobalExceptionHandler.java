@@ -1,5 +1,6 @@
 package com.ananthudev.EasyCart.exceptions;
 
+import com.ananthudev.EasyCart.exceptions.customer.CustomerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import com.ananthudev.EasyCart.exceptions.seller.DuplicateSellerException;
@@ -40,6 +41,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CustomerInvalidCredentialException.class)
+    public ResponseEntity<Map<String,Object>> handleCustomerInvalidCredentialException(CustomerInvalidCredentialException customerInvalidCredentialException){
+        Map<String,Object> errorBody = new HashMap<>();
+        errorBody.put("timestamp",LocalDateTime.now());
+        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
+        errorBody.put("error","invalid credential for customers");
+        errorBody.put("message",customerInvalidCredentialException.getMessage());
+
+        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(SellerNotFoundException.class)
     public ResponseEntity<Map<String,Object>> handleSellerNotFoundException(SellerNotFoundException sellerNotFoundException){
         Map<String,Object> errorBody = new HashMap<>();
@@ -67,12 +79,13 @@ public class GlobalExceptionHandler {
         Map<String,Object> errorBody = new HashMap<>();
         errorBody.put("timestamp",LocalDateTime.now());
         errorBody.put("status",HttpStatus.BAD_REQUEST.value());
-        errorBody.put("error","invalid credential");
+        errorBody.put("error","invalid credential for sellers");
         errorBody.put("message",sellerInvalidCredentialException.getMessage());
 
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
 
     }
+
     public ResponseEntity<Map<String,Object>> handleGenericException(Exception exception){
         Map<String,Object> errorBody = new HashMap<>();
         errorBody.put("timestamp", LocalDateTime.now());

@@ -3,6 +3,7 @@ package com.ananthudev.EasyCart.service.customer;
 import com.ananthudev.EasyCart.dto.customer.CreateCustomerDTO;
 import com.ananthudev.EasyCart.dto.customer.CustomerResponseDTO;
 import com.ananthudev.EasyCart.dto.customer.CustomerUpdateDTO;
+import com.ananthudev.EasyCart.exceptions.customer.CustomerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import com.ananthudev.EasyCart.model.Customer;
@@ -36,6 +37,10 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public CustomerResponseDTO addCustomer(CreateCustomerDTO createCustomerDTO){
+
+        if(createCustomerDTO.getName() == null || createCustomerDTO.getEmail() == null || createCustomerDTO.getPassword() == null || createCustomerDTO.getPhoneNumber() == null){
+            throw new CustomerInvalidCredentialException("invalid credential for customers");
+        }
 
         boolean exists = customerRepository.findAll().stream().anyMatch(c-> c.getEmail().equalsIgnoreCase(createCustomerDTO.getEmail()));
 
@@ -78,7 +83,9 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public CustomerResponseDTO updateCustomer(Long id, CustomerUpdateDTO customerUpdateDTO){
-
+        if(customerUpdateDTO.getName() == null || customerUpdateDTO.getPassword() == null || customerUpdateDTO.getPhoneNumber() == null){
+            throw new CustomerInvalidCredentialException("invalid credential for customer");
+        }
         boolean exists = customerRepository.findAll().stream().anyMatch(customer -> customer.getId().equals(id));
         if(!exists){
             throw new CustomerNotFoundException("customer not found");
@@ -100,7 +107,7 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public ResponseEntity<String> deleteCustomer(Long id){
-        Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
+        Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found with id : "+id));
         customerRepository.delete(customer);
         return ResponseEntity.ok("customer deleted successfully");
     }
