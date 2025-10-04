@@ -4,6 +4,7 @@ import com.ananthudev.EasyCart.dto.seller.CreateSellerDTO;
 import com.ananthudev.EasyCart.dto.seller.SellerResponseDTO;
 import com.ananthudev.EasyCart.dto.seller.SellerUpdateDTO;
 import com.ananthudev.EasyCart.exceptions.seller.DuplicateSellerException;
+import com.ananthudev.EasyCart.exceptions.seller.SellerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.seller.SellerNotFoundException;
 import com.ananthudev.EasyCart.model.Seller;
 import com.ananthudev.EasyCart.repository.SellerRepository;
@@ -18,7 +19,7 @@ public class SellerService implements ISellerService{
 
     private final SellerRepository sellerRepository;
 
-    public SellerService (SellerRepository sellerRepository){
+    private SellerService (SellerRepository sellerRepository){
         this.sellerRepository = sellerRepository;
     }
 
@@ -50,11 +51,14 @@ public class SellerService implements ISellerService{
 
     @Override
     public SellerResponseDTO addSeller(CreateSellerDTO createSellerDTO) {
+        if(createSellerDTO.getName() == null || createSellerDTO.getEmail() == null|| createSellerDTO.getPassword() == null||createSellerDTO.getBusinessName() == null || createSellerDTO.getPhoneNumber() == null || createSellerDTO.getGSTNumber() == null){
+            throw new SellerInvalidCredentialException("invalid credential for seller");
+        }
         boolean exist = sellerRepository.findAll().stream().anyMatch(s->s.getEmail().equalsIgnoreCase(createSellerDTO.getEmail()));
         if(exist){
             throw new DuplicateSellerException("seller already exist with given email "+createSellerDTO.getEmail());
         }
-
+        System.out.println("input : "+createSellerDTO);
         Seller seller = new Seller();
         seller.setName(createSellerDTO.getName());
         seller.setEmail(createSellerDTO.getEmail());
@@ -78,12 +82,30 @@ public class SellerService implements ISellerService{
         if(!exist){
             throw new SellerNotFoundException("seller not find with the id : "+id);
         }
+        Seller seller = sellerRepository.findById(id).orElseThrow(()->new SellerNotFoundException("seller not found"));
+        if(sellerUpdateDTO.getName() == null || sellerUpdateDTO.getBusinessName() == null || sellerUpdateDTO.getPassword() == null || sellerUpdateDTO.getPhoneNumber() == null){
+            throw new SellerInvalidCredentialException("invalid credential for seller");
+        }
+        seller.setName(sellerUpdateDTO.getName());
+        seller.setBusinessName(sellerUpdateDTO.getBusinessName());
+        seller.setPassword(sellerUpdateDTO.getPassword());
+        seller.setPhoneNumber(sellerUpdateDTO.getPhoneNumber());
+        Seller savedSeller = sellerRepository.save(seller);
 
-        return null;
+        return new SellerResponseDTO(
+                savedSeller.getName(),
+                savedSeller.getEmail(),
+                savedSeller.getPhoneNumber()
+        );
     }
 
     @Override
     public ResponseEntity<String> deleteSeller(Long id) {
-        return null;
+        boolean exist = sellerRepository.findAll().stream().anyMatch(s->s.getId().equals(id));
+        if(!exist){
+            throw new SellerNotFoundException("seller not found with id : "+id);
+        }
+        sellerRepository.deleteById(id);
+        return ResponseEntity.ok("seller deleted");
     }
 }

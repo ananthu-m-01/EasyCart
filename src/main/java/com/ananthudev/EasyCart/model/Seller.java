@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class Seller {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

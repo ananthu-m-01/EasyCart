@@ -3,6 +3,7 @@ package com.ananthudev.EasyCart.exceptions;
 import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import com.ananthudev.EasyCart.exceptions.seller.DuplicateSellerException;
+import com.ananthudev.EasyCart.exceptions.seller.SellerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.seller.SellerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,18 @@ public class GlobalExceptionHandler {
         errorBody.put("message",duplicateSellerException.getMessage());
 
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SellerInvalidCredentialException.class)
+    public ResponseEntity<Map<String,Object>> handleSellerInvalidCredentialException(SellerInvalidCredentialException sellerInvalidCredentialException){
+        Map<String,Object> errorBody = new HashMap<>();
+        errorBody.put("timestamp",LocalDateTime.now());
+        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
+        errorBody.put("error","invalid credential");
+        errorBody.put("message",sellerInvalidCredentialException.getMessage());
+
+        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
+
     }
     public ResponseEntity<Map<String,Object>> handleGenericException(Exception exception){
         Map<String,Object> errorBody = new HashMap<>();
