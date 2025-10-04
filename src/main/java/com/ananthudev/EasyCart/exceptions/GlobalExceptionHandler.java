@@ -2,6 +2,8 @@ package com.ananthudev.EasyCart.exceptions;
 
 import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
+import com.ananthudev.EasyCart.exceptions.seller.DuplicateSellerException;
+import com.ananthudev.EasyCart.exceptions.seller.SellerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +35,28 @@ public class GlobalExceptionHandler {
         errorBody.put("status",HttpStatus.BAD_REQUEST.value());
         errorBody.put("error","customer not found");
         errorBody.put("message",customerNotFoundException.getMessage());
+
+        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SellerNotFoundException.class)
+    public ResponseEntity<Map<String,Object>> handleSellerNotFoundException(SellerNotFoundException sellerNotFoundException){
+        Map<String,Object> errorBody = new HashMap<>();
+        errorBody.put("timestamp",LocalDateTime.now());
+        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
+        errorBody.put("error","seller not found");
+        errorBody.put("message",sellerNotFoundException.getMessage());
+
+        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateSellerException.class)
+    public ResponseEntity<Map<String,Object>> handleDuplicateSellerException(DuplicateSellerException duplicateSellerException){
+        Map<String,Object> errorBody = new HashMap<>();
+        errorBody.put("timestamp",LocalDateTime.now());
+        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
+        errorBody.put("error","seller already exist with given email");
+        errorBody.put("message",duplicateSellerException.getMessage());
 
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
     }
