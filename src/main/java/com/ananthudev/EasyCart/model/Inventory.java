@@ -8,23 +8,19 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Discount {
+@Data
+public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String code;
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "product_id",nullable = false)
+    private Product product;
 
-    @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
-
-    private Long value;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private boolean isActive;
+    private Long quantityAvailable;
+    private LocalDateTime lastRestockedAt;
 }

@@ -5,26 +5,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Discount {
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String code;
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "order_id",nullable = false)
+    private Order order;
 
     @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
+    private PaymentMethod paymentMethod;
 
-    private Long value;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private boolean isActive;
+    private BigDecimal amount;
+    private PaymentStatus paymentStatus;
+    private Long transactionId;
+    private LocalDateTime createdAt;
+
 }

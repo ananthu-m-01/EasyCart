@@ -11,20 +11,15 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Discount {
+public class Wishlist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String code;
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "customer_id",nullable = false)
+    private Customer customer;
 
-    @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
-
-    private Long value;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private boolean isActive;
+    private LocalDateTime createdAt;
 }

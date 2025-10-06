@@ -7,24 +7,25 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Discount {
+@Entity
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String code;
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "customer_id",nullable = false)
+    private Customer customer;
+
+    private String message;
 
     @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
+    private NotificationType notificationType;
 
-    private Long value;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private boolean isActive;
+    private boolean isRead;
+    private LocalDateTime createdAt;
 }
