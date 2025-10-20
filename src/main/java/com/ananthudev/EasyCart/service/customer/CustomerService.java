@@ -8,6 +8,7 @@ import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import com.ananthudev.EasyCart.model.Customer;
 import com.ananthudev.EasyCart.repository.CustomerRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,22 +26,16 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public List<CustomerResponseDTO> getAllCustomers() {
-        List<Customer> customers = customerRepository.findAll();
-
-        return customers.stream()
-                .map(c -> new CustomerResponseDTO(
-                        c.getName(),
-                        c.getEmail(),
-                        c.getPhoneNumber()
-                )).toList();
+        return customerRepository.findAll().
+                stream().map(c -> CustomerResponseDTO.builder()
+                .name(c.getName())
+                .email(c.getEmail())
+                .phoneNumber(c.getPhoneNumber())
+                .build()).toList();
     }
 
     @Override
-    public CustomerResponseDTO addCustomer(CreateCustomerDTO createCustomerDTO){
-
-        if(createCustomerDTO.getName() == null || createCustomerDTO.getEmail() == null || createCustomerDTO.getPassword() == null || createCustomerDTO.getPhoneNumber() == null){
-            throw new CustomerInvalidCredentialException("invalid credential for customers");
-        }
+    public CustomerResponseDTO addCustomer(@Valid CreateCustomerDTO createCustomerDTO){
 
         boolean exists = customerRepository.findAll().stream().anyMatch(c-> c.getEmail().equalsIgnoreCase(createCustomerDTO.getEmail()));
 

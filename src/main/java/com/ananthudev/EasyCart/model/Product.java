@@ -32,6 +32,7 @@ public class Product {
     private String name;
     private String description;
     private BigDecimal price;
+    private Long quantity;
     private String stockUnit;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
