@@ -5,9 +5,7 @@ import com.ananthudev.EasyCart.exceptions.cart.CartNotFoundException;
 import com.ananthudev.EasyCart.exceptions.category.CategoryInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.category.CategoryNotFoundException;
 import com.ananthudev.EasyCart.exceptions.category.DuplicateCategoryFoundException;
-import com.ananthudev.EasyCart.exceptions.customer.CustomerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
-import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import com.ananthudev.EasyCart.exceptions.delivery.InvalidDeliveryAddressException;
 import com.ananthudev.EasyCart.exceptions.discount.DiscountExpiredException;
 import com.ananthudev.EasyCart.exceptions.discount.DiscountNotApplicableException;
@@ -27,6 +25,7 @@ import com.ananthudev.EasyCart.exceptions.review.ReviewNotFoundException;
 import com.ananthudev.EasyCart.exceptions.seller.DuplicateSellerException;
 import com.ananthudev.EasyCart.exceptions.seller.SellerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.seller.SellerNotFoundException;
+import com.ananthudev.EasyCart.exceptions.wishlist.WishlistItemNotFoundException;
 import com.ananthudev.EasyCart.exceptions.wishlist.WishlistNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,17 +42,6 @@ public class GlobalExceptionHandler {
 
 //    Customer exceptions
 
-    @ExceptionHandler(DuplicateCustomerException.class)
-    public ResponseEntity<Map<String, Object>> handleDuplicateCustomer(DuplicateCustomerException duplicateCustomerException){
-        Map<String, Object> errorBody = new HashMap<>();
-        errorBody.put("timestamp", LocalDateTime.now());
-        errorBody.put("status", HttpStatus.BAD_REQUEST.value());
-        errorBody.put("error","Duplicate customer");
-        errorBody.put("message",duplicateCustomerException.getMessage());
-
-        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(CustomerNotFoundException.class)
     public ResponseEntity<Map<String,Object>> handleCustomerNotFoundException(CustomerNotFoundException customerNotFoundException){
         Map<String,Object> errorBody = new HashMap<>();
@@ -61,17 +49,6 @@ public class GlobalExceptionHandler {
         errorBody.put("status",HttpStatus.BAD_REQUEST.value());
         errorBody.put("error","customer not found");
         errorBody.put("message",customerNotFoundException.getMessage());
-
-        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(CustomerInvalidCredentialException.class)
-    public ResponseEntity<Map<String,Object>> handleCustomerInvalidCredentialException(CustomerInvalidCredentialException customerInvalidCredentialException){
-        Map<String,Object> errorBody = new HashMap<>();
-        errorBody.put("timestamp",LocalDateTime.now());
-        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
-        errorBody.put("error","invalid credential for customers");
-        errorBody.put("message",customerInvalidCredentialException.getMessage());
 
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
     }
@@ -305,13 +282,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(WishlistNotFoundException.class)
-    public ResponseEntity<Map<String,Object>> handleWishlistItemNotFoundException(WishlistNotFoundException wishlistNotFoundException){
+    @ExceptionHandler(WishlistItemNotFoundException.class)
+    public ResponseEntity<Map<String,Object>> handleWishlistItemNotFoundException(WishlistItemNotFoundException wishlistItemNotFoundException){
         Map<String,Object> errorBody = new HashMap<>();
         errorBody.put("timestamp",LocalDateTime.now());
         errorBody.put("status",HttpStatus.BAD_REQUEST.value());
         errorBody.put("error","not found");
-        errorBody.put("message",wishlistNotFoundException.getMessage());
+        errorBody.put("message",wishlistItemNotFoundException.getMessage());
 
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
     }

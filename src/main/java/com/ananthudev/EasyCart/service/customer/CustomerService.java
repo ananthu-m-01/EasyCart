@@ -3,9 +3,7 @@ package com.ananthudev.EasyCart.service.customer;
 import com.ananthudev.EasyCart.dto.customer.CreateCustomerDTO;
 import com.ananthudev.EasyCart.dto.customer.CustomerResponseDTO;
 import com.ananthudev.EasyCart.dto.customer.CustomerUpdateDTO;
-import com.ananthudev.EasyCart.exceptions.customer.CustomerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
-import com.ananthudev.EasyCart.exceptions.customer.DuplicateCustomerException;
 import com.ananthudev.EasyCart.model.Customer;
 import com.ananthudev.EasyCart.repository.CustomerRepository;
 import jakarta.validation.Valid;
@@ -37,67 +35,58 @@ public class CustomerService implements ICustomerService {
     @Override
     public CustomerResponseDTO addCustomer(@Valid CreateCustomerDTO createCustomerDTO){
 
-        boolean exists = customerRepository.findAll().stream().anyMatch(c-> c.getEmail().equalsIgnoreCase(createCustomerDTO.getEmail()));
-
-        if(exists){
-            throw new DuplicateCustomerException("customer with : "+createCustomerDTO.getEmail()+" is already exists!");
-        }
-
-        Customer customer = new Customer();
-        customer.setName(createCustomerDTO.getName());
-        customer.setEmail(createCustomerDTO.getEmail());
-        customer.setPassword(createCustomerDTO.getPassword());
-        customer.setPhoneNumber(createCustomerDTO.getPhoneNumber());
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setUpdatedAt(LocalDateTime.now());
+        Customer customer = Customer.builder()
+                .name(createCustomerDTO.getName())
+                .email(createCustomerDTO.getEmail())
+                .password(createCustomerDTO.getPassword())
+                .phoneNumber(createCustomerDTO.getPhoneNumber())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
         Customer savedCustomer = customerRepository.save(customer);
 
-        return new CustomerResponseDTO(
-                savedCustomer.getName(),
-                savedCustomer.getEmail(),
-                savedCustomer.getPhoneNumber()
-        );
+        return CustomerResponseDTO.builder()
+                .name(savedCustomer.getName())
+                .email(savedCustomer.getEmail())
+                .phoneNumber(savedCustomer.getPhoneNumber())
+                .build();
     }
 
     @Override
     public CustomerResponseDTO getCustomerById(Long id){
-        boolean exists = customerRepository.findAll().stream().anyMatch(customer -> customer.getId().equals(id));
-        if(!exists){
-            throw new CustomerNotFoundException("customer not found");
-        }
 
         Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
-        CustomerResponseDTO customerResponseDTO = new CustomerResponseDTO();
-        customerResponseDTO.setName(customer.getName());
-        customerResponseDTO.setEmail(customer.getEmail());
-        customerResponseDTO.setPhoneNumber(customer.getPhoneNumber());
 
-        return customerResponseDTO;
+        return CustomerResponseDTO.builder()
+                .name(customer.getName())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .build();
     }
 
     @Override
     public CustomerResponseDTO updateCustomer(Long id, CustomerUpdateDTO customerUpdateDTO){
-        if(customerUpdateDTO.getName() == null || customerUpdateDTO.getPassword() == null || customerUpdateDTO.getPhoneNumber() == null){
-            throw new CustomerInvalidCredentialException("invalid credential for customer");
-        }
-        boolean exists = customerRepository.findAll().stream().anyMatch(customer -> customer.getId().equals(id));
-        if(!exists){
-            throw new CustomerNotFoundException("customer not found");
-        }
 
-        Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
-        customer.setName(customerUpdateDTO.getName());
-        customer.setPassword(customerUpdateDTO.getPassword());
-        customer.setPhoneNumber(customerUpdateDTO.getPhoneNumber());
-        customer.setUpdatedAt(LocalDateTime.now());
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer existingCustomer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
 
-        return new CustomerResponseDTO(
-                savedCustomer.getName(),
-                savedCustomer.getEmail(),
-                savedCustomer.getPhoneNumber()
-        );
+        Customer updatedCustomer = Customer.builder()
+                .id(existingCustomer.getId())
+                .name(customerUpdateDTO.getName())
+                .email(existingCustomer.getEmail())
+                .password(customerUpdateDTO.getPassword())
+                .phoneNumber(customerUpdateDTO.getPhoneNumber())
+                .createdAt(existingCustomer.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        Customer savedCustomer = customerRepository.save(updatedCustomer);
+
+        return CustomerResponseDTO.builder()
+                .name(savedCustomer.getName())
+                .email(savedCustomer.getEmail())
+                .phoneNumber(savedCustomer.getPhoneNumber())
+                .build();
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.ananthudev.EasyCart.annotation.UniqueEmail;
 import com.ananthudev.EasyCart.repository.CustomerRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
 
