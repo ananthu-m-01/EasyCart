@@ -3,11 +3,10 @@ package com.ananthudev.EasyCart.service.seller;
 import com.ananthudev.EasyCart.dto.seller.CreateSellerDTO;
 import com.ananthudev.EasyCart.dto.seller.SellerResponseDTO;
 import com.ananthudev.EasyCart.dto.seller.SellerUpdateDTO;
-import com.ananthudev.EasyCart.exceptions.seller.DuplicateSellerException;
-import com.ananthudev.EasyCart.exceptions.seller.SellerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.seller.SellerNotFoundException;
 import com.ananthudev.EasyCart.model.Seller;
 import com.ananthudev.EasyCart.repository.SellerRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +24,12 @@ public class SellerService implements ISellerService{
 
     @Override
     public List<SellerResponseDTO> findAllSellers() {
-        List<Seller> sellers = sellerRepository.findAll();
-        return sellers.stream()
-                .map(seller -> new SellerResponseDTO(
-                        seller.getName(),
-                        seller.getEmail(),
-                        seller.getPhoneNumber()
-                )).toList();
+        return sellerRepository.findAll().
+                stream().map(s -> SellerResponseDTO.builder()
+                        .name(s.getName())
+                        .email(s.getEmail())
+                        .phoneNumber(s.getPhoneNumber())
+                        .build()).toList();
     }
 
     @Override
@@ -41,62 +39,63 @@ public class SellerService implements ISellerService{
             throw new SellerNotFoundException("seller not found with id : "+id);
         }
         Seller seller = sellerRepository.findById(id).orElseThrow(()-> new SellerNotFoundException("seller not found with id : "+id));
-        SellerResponseDTO sellerResponseDTO = new SellerResponseDTO();
-        sellerResponseDTO.setName(seller.getName());
-        sellerResponseDTO.setEmail(seller.getEmail());
-        sellerResponseDTO.setPhoneNumber(seller.getPhoneNumber());
 
-        return sellerResponseDTO;
+        return SellerResponseDTO.builder()
+                .name(seller.getName())
+                .phoneNumber(seller.getPhoneNumber())
+                .email(seller.getEmail())
+                .build();
     }
 
     @Override
-    public SellerResponseDTO addSeller(CreateSellerDTO createSellerDTO) {
-        if(createSellerDTO.getName() == null || createSellerDTO.getEmail() == null|| createSellerDTO.getPassword() == null||createSellerDTO.getBusinessName() == null || createSellerDTO.getPhoneNumber() == null || createSellerDTO.getGSTNumber() == null){
-            throw new SellerInvalidCredentialException("invalid credential for seller");
-        }
-        boolean exist = sellerRepository.findAll().stream().anyMatch(s->s.getEmail().equalsIgnoreCase(createSellerDTO.getEmail()));
-        if(exist){
-            throw new DuplicateSellerException("seller already exist with given email "+createSellerDTO.getEmail());
-        }
-        System.out.println("input : "+createSellerDTO);
-        Seller seller = new Seller();
-        seller.setName(createSellerDTO.getName());
-        seller.setEmail(createSellerDTO.getEmail());
-        seller.setBusinessName(createSellerDTO.getBusinessName());
-        seller.setPhoneNumber(createSellerDTO.getPhoneNumber());
-        seller.setGSTNumber(createSellerDTO.getGSTNumber());
-        seller.setPassword(createSellerDTO.getPassword());
-        seller.setCreatedAt(LocalDateTime.now());
-        seller.setUpdatedAt(LocalDateTime.now());
+    public SellerResponseDTO addSeller(@Valid CreateSellerDTO createSellerDTO) {
 
+        Seller seller = Seller.builder()
+                .name(createSellerDTO.getName())
+                .email(createSellerDTO.getEmail())
+                .businessName(createSellerDTO.getBusinessName())
+                .phoneNumber(createSellerDTO.getPhoneNumber())
+                .GSTNumber(createSellerDTO.getGSTNumber())
+                .password(createSellerDTO.getPassword())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
         Seller savedSeller = sellerRepository.save(seller);
-        return new SellerResponseDTO(savedSeller.getName(),
-                savedSeller.getEmail(),
-                savedSeller.getPhoneNumber()
-        );
+
+        return SellerResponseDTO.builder()
+                .name(savedSeller.getName())
+                .email(savedSeller.getEmail())
+                .phoneNumber(savedSeller.getPhoneNumber())
+                .build();
     }
 
     @Override
-    public SellerResponseDTO updateSeller(Long id, SellerUpdateDTO sellerUpdateDTO) {
+    public SellerResponseDTO updateSeller(Long id, @Valid SellerUpdateDTO sellerUpdateDTO) {
         boolean exist = sellerRepository.findAll().stream().anyMatch(s -> s.getId().equals(id));
         if(!exist){
             throw new SellerNotFoundException("seller not find with the id : "+id);
         }
-        Seller seller = sellerRepository.findById(id).orElseThrow(()->new SellerNotFoundException("seller not found"));
-        if(sellerUpdateDTO.getName() == null || sellerUpdateDTO.getBusinessName() == null || sellerUpdateDTO.getPassword() == null || sellerUpdateDTO.getPhoneNumber() == null){
-            throw new SellerInvalidCredentialException("invalid credential for seller");
-        }
-        seller.setName(sellerUpdateDTO.getName());
-        seller.setBusinessName(sellerUpdateDTO.getBusinessName());
-        seller.setPassword(sellerUpdateDTO.getPassword());
-        seller.setPhoneNumber(sellerUpdateDTO.getPhoneNumber());
-        Seller savedSeller = sellerRepository.save(seller);
+        Seller existingSeller = sellerRepository.findById(id).orElseThrow(()->new SellerNotFoundException("seller not found"));
 
-        return new SellerResponseDTO(
-                savedSeller.getName(),
-                savedSeller.getEmail(),
-                savedSeller.getPhoneNumber()
-        );
+        Seller updatedSeller = Seller.builder()
+                .id(existingSeller.getId())
+                .email(existingSeller.getEmail())
+                .name(sellerUpdateDTO.getName())
+                .businessName(sellerUpdateDTO.getBusinessName())
+                .password(sellerUpdateDTO.getPassword())
+                .phoneNumber(sellerUpdateDTO.getPhoneNumber())
+                .GSTNumber(existingSeller.getGSTNumber())
+                .createdAt(existingSeller.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        Seller savedSeller = sellerRepository.save(updatedSeller);
+
+        return SellerResponseDTO.builder()
+                .name(savedSeller.getName())
+                .email(savedSeller.getEmail())
+                .phoneNumber(savedSeller.getPhoneNumber())
+                .build();
     }
 
     @Override

@@ -22,13 +22,13 @@ import com.ananthudev.EasyCart.exceptions.product.OutOfStockException;
 import com.ananthudev.EasyCart.exceptions.product.ProductNotFoundException;
 import com.ananthudev.EasyCart.exceptions.review.DuplicateReviewException;
 import com.ananthudev.EasyCart.exceptions.review.ReviewNotFoundException;
-import com.ananthudev.EasyCart.exceptions.seller.DuplicateSellerException;
-import com.ananthudev.EasyCart.exceptions.seller.SellerInvalidCredentialException;
 import com.ananthudev.EasyCart.exceptions.seller.SellerNotFoundException;
 import com.ananthudev.EasyCart.exceptions.wishlist.WishlistItemNotFoundException;
 import com.ananthudev.EasyCart.exceptions.wishlist.WishlistNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -64,30 +64,6 @@ public class GlobalExceptionHandler {
         errorBody.put("message",sellerNotFoundException.getMessage());
 
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(DuplicateSellerException.class)
-    public ResponseEntity<Map<String,Object>> handleDuplicateSellerException(DuplicateSellerException duplicateSellerException){
-        Map<String,Object> errorBody = new HashMap<>();
-        errorBody.put("timestamp",LocalDateTime.now());
-        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
-        errorBody.put("error","seller already exist with given email");
-        errorBody.put("message",duplicateSellerException.getMessage());
-
-        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
-    }
-
-
-    @ExceptionHandler(SellerInvalidCredentialException.class)
-    public ResponseEntity<Map<String,Object>> handleSellerInvalidCredentialException(SellerInvalidCredentialException sellerInvalidCredentialException){
-        Map<String,Object> errorBody = new HashMap<>();
-        errorBody.put("timestamp",LocalDateTime.now());
-        errorBody.put("status",HttpStatus.BAD_REQUEST.value());
-        errorBody.put("error","invalid credential for sellers");
-        errorBody.put("message",sellerInvalidCredentialException.getMessage());
-
-        return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
-
     }
 
 //    Product exceptions
@@ -369,6 +345,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorBody,HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(err ->
+                errors.put(err.getField(), err.getDefaultMessage()));
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleJsonParseError(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", "Malformed JSON request"));
+    }
 
 //generic exception
     public ResponseEntity<Map<String,Object>> handleGenericException(Exception exception){

@@ -6,7 +6,6 @@ import com.ananthudev.EasyCart.dto.customer.CustomerUpdateDTO;
 import com.ananthudev.EasyCart.exceptions.customer.CustomerNotFoundException;
 import com.ananthudev.EasyCart.model.Customer;
 import com.ananthudev.EasyCart.repository.CustomerRepository;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,7 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public CustomerResponseDTO addCustomer(@Valid CreateCustomerDTO createCustomerDTO){
+    public CustomerResponseDTO addCustomer(CreateCustomerDTO createCustomerDTO){
 
         Customer customer = Customer.builder()
                 .name(createCustomerDTO.getName())
