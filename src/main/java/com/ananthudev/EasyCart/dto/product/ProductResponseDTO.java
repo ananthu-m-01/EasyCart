@@ -1,6 +1,7 @@
 package com.ananthudev.EasyCart.dto.product;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +11,9 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ProductResponseDTO {
-    private Long id;
+
     private String name;
     private String description;
     private BigDecimal price;
@@ -20,5 +22,5 @@ public class ProductResponseDTO {
     private String categoryName;
     private String sellerName;
     private String discountCode;  // nullable
-    private LocalDateTime createdAt;
+
 }

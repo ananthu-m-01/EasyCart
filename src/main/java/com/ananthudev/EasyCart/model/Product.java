@@ -1,7 +1,9 @@
 package com.ananthudev.EasyCart.model;
 
+import com.ananthudev.EasyCart.dto.product.ProductResponseDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +39,18 @@ public class Product {
     private String stockUnit;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public ProductResponseDTO toProductResponseDTO() {
+        return ProductResponseDTO.builder()
+                .name(getName())
+                .description(getDescription())
+                .price(getPrice())
+                .quantity(getQuantity())
+                .stockUnit(getStockUnit())
+                .categoryName(getCategory().getName())
+                .discountCode(getDiscount().getCode())
+                .sellerName(getSeller().getName())
+                .discountCode(getDiscount().getCode())
+                .build();
+    }
 }

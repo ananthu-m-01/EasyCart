@@ -4,6 +4,8 @@ import com.ananthudev.EasyCart.dto.product.CreateProductDTO;
 import com.ananthudev.EasyCart.dto.product.ProductResponseDTO;
 import com.ananthudev.EasyCart.dto.product.ProductUpdateDTO;
 import com.ananthudev.EasyCart.exceptions.category.CategoryNotFoundException;
+import com.ananthudev.EasyCart.exceptions.discount.DiscountNotFoundException;
+import com.ananthudev.EasyCart.exceptions.product.ProductNotFoundException;
 import com.ananthudev.EasyCart.exceptions.seller.SellerNotFoundException;
 import com.ananthudev.EasyCart.model.Category;
 import com.ananthudev.EasyCart.model.Discount;
@@ -34,58 +36,72 @@ public class ProductService implements  IProductService{
     }
     @Override
     public ProductResponseDTO getProductById(Long id) {
-        return null;
+        return productRepository.findById(id)
+                .map(Product::toProductResponseDTO)
+                .orElseThrow(()-> new ProductNotFoundException("product not found with id "+id));
     }
 
     @Override
     public List<ProductResponseDTO> getAllProducts() {
-        return List.of();
+        return productRepository.findAll()
+                .stream()
+                .map(Product::toProductResponseDTO)
+                .toList();
     }
 
     @Override
     public ProductResponseDTO addProducts(CreateProductDTO createProductDTO) {
-        Seller seller = sellerRepository.findById(createProductDTO.getSellerId()).
-                orElseThrow(
-                        ()-> new SellerNotFoundException("seller not found with id : "+createProductDTO.getSellerId()));
-        Category category = categoryRepository.findById(createProductDTO.getCategoryId()).
-                orElseThrow(
-                        ()-> new CategoryNotFoundException("category not found with id : "+createProductDTO.getCategoryId()));
-        Discount discount = null;
-        if (createProductDTO.getDiscountId() != null) {
-            discount = discountRepository.findById(createProductDTO.getDiscountId())
-                    .orElseThrow(() -> new RuntimeException("Discount not found"));
-        }
 
-        Product product = new Product();
-        product.setSeller(seller);
-        product.setCategory(category);
-        product.setDiscount(discount);
-        product.setName(createProductDTO.getName());
-        product.setDescription(createProductDTO.getDescription());
-        product.setPrice(createProductDTO.getPrice());
-        product.setQuantity(createProductDTO.getQuantity());
-        product.setStockUnit(createProductDTO.getStockUnit());
-        product.setCreatedAt(LocalDateTime.now());
-        product.setUpdatedAt(LocalDateTime.now());
+        Seller seller = sellerRepository
+                .findById(createProductDTO.getSellerId())
+                .orElseThrow(() -> new SellerNotFoundException(""));
+        Category category = categoryRepository
+                .findById(createProductDTO.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(""));
+        Discount discount = discountRepository
+                .findById(createProductDTO.getDiscountId())
+                .orElseThrow(() -> new DiscountNotFoundException(""));
 
-        Product savedProduct = productRepository.save(product);
+        Product product = Product.builder()
+                .seller(seller)
+                .category(category)
+                .discount(discount)
+                .name(createProductDTO.getName())
+                .description(createProductDTO.getDescription())
+                .price(createProductDTO.getPrice())
+                .quantity(createProductDTO.getQuantity())
+                .stockUnit(createProductDTO.getStockUnit())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
-        return new ProductResponseDTO(
-                savedProduct.getId(),
-                savedProduct.getName(),
-                savedProduct.getDescription(),
-                savedProduct.getPrice(),
-                savedProduct.getQuantity(),
-                savedProduct.getStockUnit(),
-                savedProduct.getCategory().getName(),
-                savedProduct.getSeller().getName(),
-                savedProduct.getDiscount() != null ? savedProduct.getDiscount().getCode() : null,
-                savedProduct.getCreatedAt()
-        );
+        productRepository.save(product);
+        return product.toProductResponseDTO();
     }
 
     @Override
     public ProductResponseDTO updateProduct(Long id,ProductUpdateDTO productUpdateDTO) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(()-> new ProductNotFoundException("product not found with id "+ id));
+
+        Seller seller = sellerRepository
+                .findById(productUpdateDTO.getSellerId())
+                .orElseThrow(()-> new SellerNotFoundException("seller not found with id "+productUpdateDTO.getSellerId()));
+
+        Category category = categoryRepository
+                .findById(productUpdateDTO.getCategoryId())
+                .orElseThrow(()-> new CategoryNotFoundException("category not found id "+productUpdateDTO.getCategoryId()));
+
+        Discount discount = discountRepository
+                .findById(productUpdateDTO.getDiscountId())
+                .orElseThrow(()-> new DiscountNotFoundException("discount not found with id "+productUpdateDTO.getDiscountId()));
+
+        Product updatedProduct = Product.builder()
+                .id(existingProduct.getId())
+                .seller(seller)
+                .category(category)
+                .discount(discount)
+
         return null;
     }
 

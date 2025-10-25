@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -17,39 +18,39 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/products")
+    @GetMapping
     public List<ProductResponseDTO> getAllProducts(){
         return productService.getAllProducts();
     }
 
-    @GetMapping("/products/{id}")
+    @GetMapping("/{id}")
     public ProductResponseDTO getProductById(@PathVariable Long id){
         return productService.getProductById(id);
     }
 
-    @PostMapping("/products")
+    @PostMapping
     public ProductResponseDTO addProducts(@RequestBody CreateProductDTO createProductDTO){
         return productService.addProducts(createProductDTO);
     }
 
 
-    @PutMapping("/products/{id}")
+    @PutMapping("/{id}")
     public ProductResponseDTO updateProduct(@PathVariable Long id,@RequestBody ProductUpdateDTO productUpdateDTO){
         return productService.updateProduct(id,productUpdateDTO);
     }
 
-    @DeleteMapping("/products/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable Long id){
         return productService.deleteProductById(id);
     }
 
 
-    @GetMapping("/products/category/{categoryId}")
+    @GetMapping("/category/{categoryId}")
     public List<ProductResponseDTO> getAllProductByCategory(@PathVariable Long categoryId){
         return productService.getProductsByCategory(categoryId);
     }
 
-    @GetMapping("/products/seller/{sellerId}")
+    @GetMapping("/seller/{sellerId}")
     public List<ProductResponseDTO> getAllProductsBySeller(@PathVariable Long sellerId){
         return productService.getAllProductsBySeller(sellerId);
     }
