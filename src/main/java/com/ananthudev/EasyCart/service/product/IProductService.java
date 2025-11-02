@@ -13,6 +13,6 @@ public interface IProductService {
     ProductResponseDTO addProducts(CreateProductDTO createProductDTO);
     ProductResponseDTO updateProduct(Long id,ProductUpdateDTO productUpdateDTO);
     ResponseEntity<String> deleteProductById(Long id);
-    List<ProductResponseDTO> getProductsByCategory(Long categoryId);
+    List<ProductResponseDTO> getAllProductsByCategory(Long categoryId);
     List<ProductResponseDTO> getAllProductsBySeller(Long sellerId);
 }

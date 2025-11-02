@@ -123,12 +123,19 @@ public class ProductService implements  IProductService{
     }
 
     @Override
-    public List<ProductResponseDTO> getProductsByCategory(Long categoryId) {
-        return List.of();
+    public List<ProductResponseDTO> getAllProductsByCategory (Long categoryId) {
+        return productRepository.findAllByCategoryId(categoryId)
+                .stream()
+                .map(Product::toProductResponseDTO)
+                .toList();
     }
+
 
     @Override
     public List<ProductResponseDTO> getAllProductsBySeller(Long sellerId) {
-        return List.of();
+        return productRepository.findAllBySellerId(sellerId)
+                .stream()
+                .map(Product::toProductResponseDTO)
+                .toList();
     }
 }
