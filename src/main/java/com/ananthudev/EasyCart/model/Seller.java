@@ -1,5 +1,6 @@
 package com.ananthudev.EasyCart.model;
 
+import com.ananthudev.EasyCart.dto.seller.SellerResponseDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,4 +30,13 @@ public class Seller {
     private String GSTNumber;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+
+    public SellerResponseDTO toSellerResponseDTO(){
+        return SellerResponseDTO.builder()
+                .name(getName())
+                .email(getEmail())
+                .phoneNumber(getPhoneNumber())
+                .build();
+    }
 }

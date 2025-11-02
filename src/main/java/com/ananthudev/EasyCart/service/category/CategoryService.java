@@ -12,6 +12,7 @@ import java.util.List;
 public class CategoryService implements ICategoryService{
     @Override
     public List<CategoryResponseDTO> getAllCategories() {
+
         return List.of();
     }
 

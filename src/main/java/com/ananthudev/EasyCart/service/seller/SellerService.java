@@ -24,27 +24,15 @@ public class SellerService implements ISellerService{
 
     @Override
     public List<SellerResponseDTO> findAllSellers() {
-        return sellerRepository.findAll().
-                stream().map(s -> SellerResponseDTO.builder()
-                        .name(s.getName())
-                        .email(s.getEmail())
-                        .phoneNumber(s.getPhoneNumber())
-                        .build()).toList();
+        return sellerRepository.findAll()
+                .stream().map(Seller::toSellerResponseDTO)
+                .toList();
     }
 
     @Override
     public SellerResponseDTO findSellerByID(Long id) {
-        boolean exists = sellerRepository.findAll().stream().anyMatch(seller -> seller.getId().equals(id));
-        if(!exists){
-            throw new SellerNotFoundException("seller not found with id : "+id);
-        }
-        Seller seller = sellerRepository.findById(id).orElseThrow(()-> new SellerNotFoundException("seller not found with id : "+id));
-
-        return SellerResponseDTO.builder()
-                .name(seller.getName())
-                .phoneNumber(seller.getPhoneNumber())
-                .email(seller.getEmail())
-                .build();
+        return sellerRepository.findById(id).map(Seller::toSellerResponseDTO)
+                .orElseThrow(()-> new SellerNotFoundException("seller not found with id : "+id));
     }
 
     @Override
@@ -62,11 +50,7 @@ public class SellerService implements ISellerService{
                 .build();
         Seller savedSeller = sellerRepository.save(seller);
 
-        return SellerResponseDTO.builder()
-                .name(savedSeller.getName())
-                .email(savedSeller.getEmail())
-                .phoneNumber(savedSeller.getPhoneNumber())
-                .build();
+        return savedSeller.toSellerResponseDTO();
     }
 
     @Override
@@ -91,11 +75,7 @@ public class SellerService implements ISellerService{
 
         Seller savedSeller = sellerRepository.save(updatedSeller);
 
-        return SellerResponseDTO.builder()
-                .name(savedSeller.getName())
-                .email(savedSeller.getEmail())
-                .phoneNumber(savedSeller.getPhoneNumber())
-                .build();
+        return savedSeller.toSellerResponseDTO();
     }
 
     @Override

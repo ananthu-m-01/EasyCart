@@ -24,11 +24,8 @@ public class CustomerService implements ICustomerService {
     @Override
     public List<CustomerResponseDTO> getAllCustomers() {
         return customerRepository.findAll().
-                stream().map(c -> CustomerResponseDTO.builder()
-                .name(c.getName())
-                .email(c.getEmail())
-                .phoneNumber(c.getPhoneNumber())
-                .build()).toList();
+                stream().map(Customer::toCustomerResponseDTO)
+                .toList();
     }
 
     @Override
@@ -45,23 +42,14 @@ public class CustomerService implements ICustomerService {
 
         Customer savedCustomer = customerRepository.save(customer);
 
-        return CustomerResponseDTO.builder()
-                .name(savedCustomer.getName())
-                .email(savedCustomer.getEmail())
-                .phoneNumber(savedCustomer.getPhoneNumber())
-                .build();
+        return savedCustomer.toCustomerResponseDTO();
     }
 
     @Override
     public CustomerResponseDTO getCustomerById(Long id){
-
-        Customer customer = customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException("customer not found"));
-
-        return CustomerResponseDTO.builder()
-                .name(customer.getName())
-                .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
-                .build();
+        return customerRepository.findById(id)
+                .map(Customer::toCustomerResponseDTO)
+                .orElseThrow(()-> new CustomerNotFoundException("customer not find with id "+id));
     }
 
     @Override
@@ -81,11 +69,7 @@ public class CustomerService implements ICustomerService {
 
         Customer savedCustomer = customerRepository.save(updatedCustomer);
 
-        return CustomerResponseDTO.builder()
-                .name(savedCustomer.getName())
-                .email(savedCustomer.getEmail())
-                .phoneNumber(savedCustomer.getPhoneNumber())
-                .build();
+        return savedCustomer.toCustomerResponseDTO();
     }
 
     @Override

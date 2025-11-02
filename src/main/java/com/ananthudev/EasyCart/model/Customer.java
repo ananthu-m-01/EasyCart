@@ -1,5 +1,6 @@
 package com.ananthudev.EasyCart.model;
 
+import com.ananthudev.EasyCart.dto.customer.CustomerResponseDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,4 +27,12 @@ public class Customer {
     private String phoneNumber;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public CustomerResponseDTO toCustomerResponseDTO(){
+        return CustomerResponseDTO.builder()
+                .name(getName())
+                .email(getEmail())
+                .phoneNumber(getPhoneNumber())
+                .build();
+    }
 }

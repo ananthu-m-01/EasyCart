@@ -34,6 +34,7 @@ public class ProductService implements  IProductService{
         this.categoryRepository = categoryRepository;
         this.discountRepository = discountRepository;
     }
+
     @Override
     public ProductResponseDTO getProductById(Long id) {
         return productRepository.findById(id)
@@ -101,13 +102,24 @@ public class ProductService implements  IProductService{
                 .seller(seller)
                 .category(category)
                 .discount(discount)
+                .name(productUpdateDTO.getName())
+                .description(productUpdateDTO.getDescription())
+                .price(productUpdateDTO.getPrice())
+                .quantity(productUpdateDTO.getQuantity())
+                .stockUnit(productUpdateDTO.getStockUnit())
+                .createdAt(existingProduct.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
-        return null;
+        Product savedProduct = productRepository.save(updatedProduct);
+        return savedProduct.toProductResponseDTO();
     }
 
     @Override
     public ResponseEntity<String> deleteProductById(Long id) {
-        return null;
+        Product product = productRepository.findById(id).orElseThrow(()-> new ProductNotFoundException("product not found with id : "+id));
+        productRepository.delete(product);
+        return ResponseEntity.ok("product deleted successfully");
     }
 
     @Override
